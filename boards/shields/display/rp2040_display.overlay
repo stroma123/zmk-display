@@ -1,0 +1,137 @@
+/*
+ * Copyright (c) 2022-2024 stroma
+ * SPDX-License-Identifier: MIT
+ */
+
+#include <dt-bindings/pinctrl/rpi-pico-rp2040-pinctrl.h>
+#include "common_display_layout.dtsi"
+
+/ {
+   model = "rp2040_display, st7735s";
+    layout_3x4: layout_3x4 {
+        compatible = "zmk,physical-layout";
+        display-name = "default layout";
+        kscan = <&kscan_3x4>;
+   };
+
+   chosen {
+     zmk,physical-layout = &layout_3x4;
+   };
+
+   kscan_3x4: kscan_3x4 {
+     compatible = "zmk,kscan-gpio-matrix";
+     diode-direction = "col2row";
+     wakeup-source;
+
+      col-gpios 
+          = <&gpio0 26  (GPIO_OPEN_SOURCE)> // col 0
+          , <&gpio0 27 (GPIO_OPEN_SOURCE)>  // col 1
+          , <&gpio0 28 (GPIO_OPEN_SOURCE)>  // col 2
+          ;
+      row-gpios
+          = <&gpio0 14 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)> // row 0
+          , <&gpio0 15 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)> // row 1
+          , <&gpio0 16 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)> // row 2
+          , <&gpio0 17 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)> // row 3
+          ;                 
+   };
+
+};
+
+&pinctrl {
+    i2c0_default: i2c0_default {
+        group1 {
+            pinmux = <I2C0_SDA_P4>, <I2C0_SCL_P5>;
+            input-enable;
+            input-schmitt-enable;
+        };
+    };
+    spi0_default: spi0_default {
+        group1 {
+            pinmux = <SPI0_CSN_P17>, <SPI0_SCK_P18>, <SPI0_TX_P19>;
+        };
+        group2 {
+            pinmux = <SPI0_RX_P16>;
+            input-enable;
+        };
+    };
+};
+
+// usb uart and zmk studio
+/ {
+    chosen {
+        zephyr,console = &cdc_acm_uart;
+        zmk,studio-rpc-uart = &sudio_rpc_uart;
+    };
+};
+
+&usbd {
+    status = "okay";
+    sudio_rpc_uart: sudio_rpc_uart {
+        compatible = "zephyr,cdc-acm-uart";
+    };
+    cdc_acm_uart: cdc_acm_uart {
+        compatible = "zephyr,cdc-acm-uart";
+    };
+};
+
+/*
+
+╭───────────────────────────────────────── Raspberry Pi Pico Pinout ─────────────────────────────────────────╮
+│                                                 ┏━━━━━┓                                                    │
+│                                            ┏━━━━┫     ┣━━━━┓                                               │
+│ PWM0 A UART0 TX  I2C0 SDA SPI0 RX      GP0 ┃◎   ┗━━━━━┛   ◎┃ VBUS                                          │
+│ PWM0 B UART0 RX  I2C0 SCL SPI0 CSn     GP1 ┃◎ ▩           ◎┃ VSYS                                          │
+│                                     Ground ┃▣ └─GP25      ▣┃ Ground                                        │
+│ PWM1 A UART0 CTS I2C1 SDA SPI0 SCK     GP2 ┃◎  ▒▒▒        ◎┃ 3v3 En                                        │
+│ PWM1 B UART0 RTS I2C1 SCL SPI0 TX      GP3 ┃◎  ▒▒▒        ◎┃ 3v3 Out                                       │
+│ PWM2 A UART1 TX  I2C0 SDA SPI0 RX      GP4 ┃◎             ◎┃ ADC VRef                                      │
+│ PWM2 B UART1 RX  I2C0 SCL SPI0 CSn     GP5 ┃◎             ◎┃ GP28 / A2  SPI1 RX  I2C0 SDA UART0 TX  PWM6 A │
+│                                     Ground ┃▣             ▣┃ ADC Ground                                    │
+│ PWM3 A UART1 CTS I2C1 SDA SPI0 SCK     GP6 ┃◎   ▓▓▓▓▓▓▓   ◎┃ GP27 / A1  SPI1 TX  I2C1 SCL UART1 RTS PWM5 B │
+│ PWM3 B UART1 RTS I2C1 SCL SPI0 TX      GP7 ┃◎   ▓▓▓▓▓▓▓   ◎┃ GP26 / A0  SPI1 SCK I2C1 SDA UART1 CTS PWM5 A │
+│ PWM4 A UART1 TX  I2C0 SDA SPI1 RX      GP8 ┃◎   ▓▓▓▓▓▓▓   ◎┃ run                                           │
+│ PWM4 B UART1 RX  I2C0 SCL SPI1 CSn     GP9 ┃◎   ▓▓▓▓▓▓▓   ◎┃ GP22       SPI0 SCK I2C1 SDA UART1 CTS PWM3 A │
+│                                     Ground ┃▣             ▣┃ Ground                                        │
+│ PWM5 A UART1 CTS I2C1 SDA SPI1 SCK    GP10 ┃◎             ◎┃ GP21       SPI0 CSn I2C0 SCL UART1 RX  PWM2 B │
+│ PWM5 B UART1 RTS I2C1 SCL SPI1 TX     GP11 ┃◎             ◎┃ GP20       SPI0 RX  I2C0 SDA UART1 TX  PWM2 A │
+│ PWM6 A UART0 TX  I2C0 SDA SPI1 RX     GP12 ┃◎             ◎┃ GP19       SPI0 TX  I2C1 SCL UART0 RTS PWM1 B │
+│ PWM6 B UART0 RX  I2C0 SCL SPI1 CSn    GP13 ┃◎             ◎┃ GP18       SPI0 SCK I2C1 SDA UART0 CTS PWM1 A │
+│                                     Ground ┃▣             ▣┃ Ground                                        │
+│ PWM7 A UART0 CTS I2C1 SDA SPI1 SCK    GP14 ┃◎             ◎┃ GP17       SPI0 CSn I2C0 SCL UART0 RX  PWM0 B │
+│ PWM7 B UART0 RTS I2C1 SCL SPI1 TX     GP15 ┃◎   ◎ ▣ ◎     ◎┃ GP16       SPI0 RX  I2C0 SDA UART0 TX  PWM0 A │
+│                                            ┗━━━━━━━━━━━━━━━┛                                               │
+│ @gadgetoid                                                                                                 │
+│ https://pico.pinout.xyz                                                                                    │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+                                              ┌╌ LED (GP25)
+                                              ┆ ┏━━━━┓
+                                          ┌─────┃    ┃─────┐
+UART0 TX | I2C0 SDA | SPI0 RX  | GP0  | 01│●  ┆ ┗━━━━┛    ●│40 | VBUS
+UART0 RX | I2C0 SCL | SPI0 CSn | GP1  | 02│●  ▩           ●│39 | VSYS
+                                 GND  | 03│■              ■│38 | GND
+           I2C1 SDA | SPI0 SCK | GP2  | 04│●    ╭─╮       ●│37 | 3V3_EN
+           I2C1 SCL | SPI0 TX  | GP3  | 05│●    │ │       ●│36 | 3V3(OUT)
+UART1 TX | I2C0 SDA | SPI0 RX  | GP4  | 06│●    ╰─╯       ●│35 |          | ADC_VREF
+UART1 RX | I2C0 SCL | SPI0 CSn | GP5  | 07│●              ●│34 | GP28     | ADC2
+                                 GND  | 08│■              ■│33 | GND      | AGND
+           I2C1 SDA | SPI0 SCK | GP6  | 09│●   ┌─────┐    ●│32 | GP27     | ADC1     | I2C1 SCL
+           I2C1 SCL | SPI0 TX  | GP7  | 10│●   │     │    ●│31 | GP26     | ADC0     | I2C1 SDA
+UART1 TX | I2C0 SDA | SPI1 RX  | GP8  | 11│●   │     │    ●│30 | RUN
+UART1 RX | I2C0 SCL | SPI1 CSn | GP9  | 12│●   └─────┘    ●│29 | GP22
+                                 GND  | 13│■              ■│28 | GND
+           I2C1 SDA | SPI1 SCK | GP10 | 14│●              ●│27 | GP21     |          | I2C0 SCL
+           I2C1 SCL | SPI1 TX  | GP11 | 15│●              ●│26 | GP20     |          | I2C0 SDA
+UART0 TX | I2C0 SDA | SPI1 RX  | GP12 | 16│●              ●│25 | GP19     | SPI0 TX  | I2C1 SCL
+UART0 RX | I2C0 SCL | SPI1 CSn | GP13 | 17│●              ●│24 | GP18     | SPI0 SCK | I2C1 SDA
+                                 GND  | 18│■              ■│23 | GND
+           I2C1 SDA | SPI1 SCK | GP14 | 19│●              ●│22 | GP17     | SPI0 CSn | I2C0 SCL | UART0 RX
+           I2C1 SCL | SPI1 TX  | GP15 | 20│●     ● ■ ●    ●│21 | GP16     | SPI0 RX  | I2C0 SDA | UART0 TX
+                                          └────────────────┘
+                                                 ┆ ┆ ┆
+                                                 ┆ ┆ └╌ SWDIO
+                                                 ┆ └╌╌╌ GND
+                                                 └╌╌╌╌╌ SWCLK
+
+*/

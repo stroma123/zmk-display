@@ -1,0 +1,120 @@
+/*
+ * Copyright (c) 2022-2025 stroma
+ * SPDX-License-Identifier: MIT
+ */
+
+#define USE_SOC_NRF52840
+#include "common_display_layout.dtsi"
+
+/ {
+    model = "nrf52_display";
+    layout_3x4: layout_3x4 {
+        compatible = "zmk,physical-layout";
+        display-name = "default layout";
+        kscan = <&kscan_3x4>;
+    };
+
+    chosen {
+        zmk,physical-layout = &layout_3x4;
+    };
+
+    kscan_3x4: kscan_3x4 {
+        compatible = "zmk,kscan-gpio-matrix";
+        wakeup-source;
+        diode-direction = "row2col";
+
+        col-gpios 
+            = <&gpio0 9  (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)> // col 0
+            , <&gpio0 10 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)> // col 1
+            , <&gpio1 11 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)> // col 2
+            ;
+        row-gpios
+            = <&gpio1 13 (GPIO_OPEN_SOURCE)> // row 0
+            , <&gpio1 15 (GPIO_OPEN_SOURCE)> // row 1
+            , <&gpio0 2  (GPIO_OPEN_SOURCE)> // row 2
+            , <&gpio0 29 (GPIO_OPEN_SOURCE)> // row 3
+            ;
+    };
+
+};
+
+&pinctrl {
+    // configuration for i2c0 device, default state
+    i2c0_default: i2c0_default {
+        group1 {
+            psels = <NRF_PSEL(TWIM_SDA, 0, 17)>,
+                    <NRF_PSEL(TWIM_SCL, 0, 20)>;
+        };
+    };
+
+    i2c0_sleep: i2c0_sleep {
+        group1 {
+            psels = <NRF_PSEL(TWIM_SDA, 0, 17)>,
+                    <NRF_PSEL(TWIM_SCL, 0, 20)>;
+            low-power-enable;
+        };
+    };
+    spi1_default: spi1_default {
+        group1 {
+            psels = <NRF_PSEL(SPIM_SCK, 0, 6)>,
+                    <NRF_PSEL(SPIM_MOSI, 0, 8)>,
+                    <NRF_PSEL(SPIM_MISO, 0, 22)>;
+        };
+    };
+
+    spi1_sleep: spi1_sleep {
+        group1 {
+            psels = <NRF_PSEL(SPIM_SCK, 0, 6)>,
+                    <NRF_PSEL(SPIM_MOSI, 0, 8)>,
+                    <NRF_PSEL(SPIM_MISO, 0, 22)>;
+            low-power-enable;
+        };
+    };
+};
+
+// usb uart and zmk studio
+/ {
+    chosen {
+        zephyr,console = &cdc_acm_uart;
+        zmk,studio-rpc-uart = &sudio_rpc_uart;
+    };
+};
+
+zephyr_udc0: &usbd {
+    status = "okay";
+    sudio_rpc_uart: sudio_rpc_uart {
+        compatible = "zephyr,cdc-acm-uart";
+    };
+    cdc_acm_uart: cdc_acm_uart {
+        compatible = "zephyr,cdc-acm-uart";
+    };
+};
+
+
+/*
+
+SuperMini nRF52840 / nice!Nano v2 pinout
+
+                                        ┌╌╌╌╌ P0.15 (PIN_LED)
+                               ┏━━━━━━┓ ┆
+                          ┌────┃      ┃────┐
+                    GND   │■   ┗━━━━━━┛ ┆ ■│ VBAT+
+         TX | D0  | P0.06 │●            ▩ ■│ VBAT+
+         RX | D1  | P0.08 │●              ■│ GND
+                    GND   │■              ■│ RESET
+                    GND   │■              ●│ 3V3   | P0.13 | EXT_VCC
+        SCK | D2  | P0.17 │●   ╭───────╮  ●│ P0.31 | D17   | A2
+       MISO | D3  | P0.20 │●   │       │  ●│ P0.29 | D16   | A1
+       MOSI | D4  | P0.22 │●   │       │  ●│ P0.02 | D15   | A0
+         CS | D5  | P0.24 │●   ╰───────╯  ●│ P1.15 | D14   | SCL1
+        SDA | D6  | P1.00 │●              ●│ P1.13 | D13   | SDA1
+        SCL | D7  | P1.11 │●              ●│ P1.10 | D12   |  -
+         —  | D8  | P1.04 │●  ● ● ●       ●│ P0.10 | D11   | NFC2
+         —  | D9  | P1.06 │●              ●│ P0.09 | D10   | NFC1
+                          └────────────────┘
+                              ┆ ┆ ┆
+                              ┆ ┆ └╌ P1.07 | D20 | MOSI1
+                              ┆ └╌╌╌ P1.02 | D19 | MISO1
+                              └╌╌╌╌╌ P1.01 | D18 | SCK1
+
+*/

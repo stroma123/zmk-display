@@ -1,0 +1,86 @@
+/*
+ * Copyright (c) 2022-2024 alin m elena
+ * SPDX-License-Identifier: MIT
+ */
+ / {
+  model = "mlego m66, rev4,ssd1306";
+	chosen {
+		zephyr,display = &ssd1306128x64;
+	};
+
+};
+
+#ifdef USE_SOC_NRF52840
+&spi1 {
+#else
+&spi0 {
+#endif
+    status = "disabled";
+};
+
+&i2c0 {
+#ifdef USE_SOC_NRF52840
+    compatible = "nordic,nrf-twi";
+    pinctrl-0 = <&i2c0_default>;
+    pinctrl-1 = <&i2c0_sleep>;
+    pinctrl-names = "default", "sleep";    
+#else
+    pinctrl-0 = <&i2c0_default>;
+    pinctrl-names = "default";
+#endif
+    clock-frequency = <I2C_BITRATE_FAST>;    
+    status = "okay";
+
+    ssd1306128x64: ssd1306@3c {
+        compatible = "solomon,ssd1306fb";
+        reg = <0x3c>;
+        width = <128>;
+        height = <64>;
+        segment-offset = <0>;
+        page-offset = <0>;
+        display-offset = <0>;
+        multiplex-ratio = <63>;
+        //segment-remap;  // Last column address is mapped to first segment - mirror x
+        //com-invdir;     // Scan direction is from last COM output to first COM output - mirror y
+        //com-sequential; // Sequential COM pin configuration - rotate 180 degree
+        prechargep = <0x22>;
+        inversion-on;     // Turn on display color inverting
+    };
+};
+
+/*
+
+The Pico has two SPI peripherals, SPI-0 and SPI-1. Either (or both) can be used.
+The are no default pin assignments so they must be set explicitly.
+
+According to the RP2040 data sheet, section 1.4.3 ”GPIO Functions” page 13, 
+you have the following choices for SPI pins:
+SPI-0_SCK            IO-Pins: 2, 6, 18, 22
+SPI-0_MOSI (SPI0 TX) IO-Pins: 3, 7, 19, 23
+SPI-0_MISO (SPI0 RX) IO-Pins: 0, 4, 16, 20
+SPI-0 CS             IO-Pins: 1, 5, 17, 21
+  
+SPI-1_SCK            IO-Pins: 10, 14, 26
+SPI-1_MOSI (SPI1 TX) IO-Pins: 11, 15, 27
+SPI-1_MISO (SPI1 RX) IO-Pins:  8, 12, 24, 28
+SPI-1_CS             IO-Pins:  9, 13, 25, 29
+
+According to zmk/zephyr/boards/arm/rpi_pico/rpi_pico-pinctrl.dtsi default SPI0 pins are 16..19
+
+ st7735s module -> ProMicro PR2040
+ GND            -> GND
+ VCC            -> 3V3
+ SCK            -> P0.18, SPI clock
+ SDA            -> P0.19, SPI data
+ RES            -> P0.08, Active low
+ DC             -> P0.07, DC=1 - data, DC=0 - command
+ CS             -> P0.17, Active low
+ BLK            -> D2, Blacklight Control. High: Blacklight on Low: Blacklight off.
+
+ssd1306 module -> ProMicro nRF52840
+GND            -> GND
+VCC            -> 3V3 (power cut off if P0.13 is low)
+SDA            -> P0.17
+SCK            -> P0.20
+
+*/

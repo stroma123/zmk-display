@@ -1,0 +1,113 @@
+# Copyright (c) 2022-2024 The ZMK Contributors
+# SPDX-License-Identifier: MIT
+
+if SHIELD_SSD1306 || SHIELD_ST7735S || SHIELD_RP2040_DISPLAY || SHIELD_NRF52_DISPLAY
+
+config BOARD_DEBUG
+    string
+	default "SHIELD_SSD1306 || SHIELD_ST7735S || SHIELD_RP2040_DISPLAY || SHIELD_NRF52_DISPLAY"
+
+config ZMK_KEYBOARD_NAME
+    default "rp2040-st7735" if SHIELD_RP2040_DISPLAY && SHIELD_ST7735S 
+    default "rp2040-ssd1306" if SHIELD_RP2040_DISPLAY && SHIELD_SSD1306
+    default "rp2040-display" if SHIELD_RP2040_DISPLAY
+    default "nrf52-st7735" if SHIELD_NRF52_DISPLAY && SHIELD_ST7735S 
+    default "nrf52-ssd1306" if SHIELD_NRF52_DISPLAY && SHIELD_SSD1306
+    default "nrf52-display"
+
+
+if SHIELD_NRF52_DISPLAY
+
+config USB_NRFX
+    default y
+
+endif # SHIELD_NRF52_DISPLAY
+
+config ZMK_DISPLAY
+	select LV_USE_CONT
+	select LV_FONT_MONTSERRAT_26
+
+if ZMK_DISPLAY
+
+config I2C
+    default y if SHIELD_SSD1306
+    default n
+
+config SSD1306
+    default y if SHIELD_SSD1306
+    default n
+
+config SPI
+    default y if SHIELD_ST7735S
+    default n
+
+config ST7735R
+    default y if SHIELD_ST7735S
+    default n
+
+config SYSTEM_WORKQUEUE_STACK_SIZE
+    default 2048
+
+choice ZMK_DISPLAY_WORK_QUEUE
+    default ZMK_DISPLAY_WORK_QUEUE_DEDICATED
+endchoice
+
+config ZMK_DISPLAY_DEDICATED_THREAD_STACK_SIZE
+    default 4096
+
+config ZMK_DISPLAY_DEDICATED_THREAD_PRIORITY
+    default 10
+
+choice ZMK_LV_FONT_DEFAULT_SMALL
+    default ZMK_LV_FONT_DEFAULT_SMALL_MONTSERRAT_26
+endchoice
+
+endif # ZMK_DISPLAY
+
+if LVGL
+
+if SHIELD_ST7735S
+
+config LV_Z_VDB_SIZE
+    default 100
+
+config LV_DPI_DEF
+    default 161
+
+config LV_Z_BITS_PER_PIXEL
+    default 1
+
+choice LV_COLOR_DEPTH
+    default LV_COLOR_DEPTH_1
+endchoice
+
+config LV_Z_MEM_POOL_SIZE
+     default 8192
+
+endif # SHIELD_ST7735S
+
+
+if SHIELD_SSD1306
+
+config LV_Z_VDB_SIZE
+    default 64
+
+config LV_DPI_DEF
+    default 148
+
+config LV_Z_BITS_PER_PIXEL
+    default 1
+
+choice LV_COLOR_DEPTH
+    default LV_COLOR_DEPTH_1
+endchoice
+
+config LV_Z_MEM_POOL_SIZE
+     default 4096
+
+endif # SHIELD_SSD1306
+
+endif # LVGL 
+
+endif # SHIELD_SSD1306 || SHIELD_ST7735S || SHIELD_RP2040_DISPLAY || SHIELD_NRF52_DISPLAY
+

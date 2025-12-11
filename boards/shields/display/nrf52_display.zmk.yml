@@ -1,0 +1,11 @@
+file_format: "1"
+id: nrf52_display
+name: nrf52_display
+type: shield
+requires: [nice_nano_v2]
+features:
+  - keys
+  - studio
+outputs:
+  - usb
+  - ble

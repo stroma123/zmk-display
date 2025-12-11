@@ -1,0 +1,101 @@
+/*
+ * Copyright (c) 2022-2024 alin m elena
+ * SPDX-License-Identifier: MIT
+ */
+ / {
+	model = "rp2040, display, st7735s";
+	chosen {
+		zephyr,display = &st7735s160x80;
+	};
+
+};
+
+&i2c0 {
+    status = "disabled";
+};
+
+#ifdef USE_SOC_NRF52840
+&spi1 {
+    compatible = "nordic,nrf-spim";
+    pinctrl-0 = <&spi1_default>;
+    pinctrl-1 = <&spi1_sleep>;
+    pinctrl-names = "default", "sleep";
+    cs-gpios = <&gpio1 6 GPIO_ACTIVE_LOW>;
+#else
+&spi0 {
+  pinctrl-0 = < &spi0_default >;
+  pinctrl-names = "default";
+  cs-gpios = <&gpio0 6 GPIO_ACTIVE_LOW> ,
+             <&gpio0 21 GPIO_ACTIVE_LOW>;
+#endif
+	status = "okay";
+
+	st7735s160x80: st7735r@0 {
+		compatible = "sitronix,st7735r";
+    	status = "okay";
+		spi-max-frequency = <1000000>;
+		reg = <0>;
+#ifdef USE_SOC_NRF52840
+        cmd-data-gpios = <&gpio0 11 GPIO_ACTIVE_LOW>;	
+        reset-gpios = <&gpio0 9  GPIO_ACTIVE_LOW>;
+#else
+		cmd-data-gpios = <&gpio0 7 GPIO_ACTIVE_LOW>;	
+		reset-gpios = <&gpio0 8  GPIO_ACTIVE_LOW>;
+#endif
+		width = <80>;
+		height = <160>;
+		x-offset = <0>;
+		y-offset = <0>;
+		madctl = <0xC0>;
+		colmod = <0x05>;
+		caset = [00 00 00 4F];
+		raset = [00 00 00 9F];
+		vmctr1 = <0x0e>;
+		invctr = <0x07>;
+		pwctr1 = [a2 02 84];
+		pwctr2 = [c5];
+		pwctr3 = [0a 00];
+		pwctr4 = [8a 2a];
+		pwctr5 = [8a ee];
+		frmctr1 = [01 2c 2d];
+		frmctr2 = [01 2c 2d];
+		frmctr3 = [01 2c 2d 01 2c 2d];
+		gamctrp1 = [02 1c 07 12 37 32 29 2d 29 25 2b 39 00 01 03 10];
+		gamctrn1 = [03 1d 07 06 2e 2c 29 2d 2e 2e 37 3f 00 00 02 10];
+	};
+};
+
+/*
+// The Pico has two SPI peripherals, SPI-0 and SPI-1. Either (or both) can be used.
+// The are no default pin assignments so they must be set explicitly.
+
+// According to the RP2040 data sheet, section 1.4.3 ”GPIO Functions” page 13, 
+// you have the following choices for SPI pins:
+// SPI-0_SCK            IO-Pins: 2, 6, 18, 22
+// SPI-0_MOSI (SPI0 TX) IO-Pins: 3, 7, 19, 23
+// SPI-0_MISO (SPI0 RX) IO-Pins: 0, 4, 16, 20
+// SPI-0 CS             IO-Pins: 1, 5, 17, 21
+  
+// SPI-1_SCK            IO-Pins: 10, 14, 26
+// SPI-1_MOSI (SPI1 TX) IO-Pins: 11, 15, 27
+// SPI-1_MISO (SPI1 RX) IO-Pins:  8, 12, 24, 28
+// SPI-1_CS             IO-Pins:  9, 13, 25, 29
+
+According to zmk/zephyr/boards/arm/rpi_pico/rpi_pico-pinctrl.dtsi default SPI0 pins are 16..19
+
+ st7735s module -> ProMicro PR2040
+ GND            -> GND
+ VCC            -> 3V3
+ SCK            -> P0.18, SPI clock
+ SDA            -> P0.19, SPI data (MOSI)
+ RES            -> P0.08, Active low
+ DC             -> P0.07, DC=1 - data, DC=0 - command
+ CS             -> P0.17, Active low
+ BLK            -> D2, Blacklight Control. High: Blacklight on Low: Blacklight off.
+
+ssd1306 module -> ProMicro nRF52840
+GND            -> GND
+VCC            -> 3V3 (power cut off if P0.13 is low)
+SDA            -> P0.17
+SCK            -> P0.20
+*/

@@ -1,0 +1,77 @@
+# This file generates the GitHub Actions matrix.
+# For simple board + shield combinations, add them to the top level board and
+# shield arrays, for more control, add individual board + shield combinations
+# to the `include` property. You can also use the `cmake-args` property to
+# pass flags to the build command and `artifact-name` to assign a name to
+# distinguish build outputs from each other:
+#
+# board: [ "nice_nano_v2" ]
+# shield: [ "corne_left", "corne_right" ]
+# include:
+#   - board: bdn9_rev2
+#   - board: nice_nano_v2
+#     shield: reviung41
+#   - board: nice_nano_v2
+#     shield: corne_left
+#     cmake-args: -DCONFIG_ZMK_USB_LOGGING=y
+#     artifact-name: corne_left_with_logging
+#
+---
+include:
+  - board: nice_nano_v2
+    shield:
+      - nrf52_display
+    snippets:
+      - studio-rpc-usb-uart
+      - zmk-usb-logging
+    cmake-args: -DCONFIG_ZMK_STUDIO=y -DCONFIG_ZMK_USB_LOGGING=y -DUSE_SOC_NRF52840=y
+    artifact-name: nrf52_display
+
+  - board: nice_nano_v2
+    shield:
+      - nrf52_display
+      - ssd1306
+    snippets:
+      - studio-rpc-usb-uart
+      - zmk-usb-logging
+    cmake-args: -DCONFIG_ZMK_STUDIO=y -DCONFIG_ZMK_USB_LOGGING=y -DUSE_SOC_NRF52840=y
+    artifact-name: nrf52_ssd1306
+
+- board: nice_nano_v2
+    shield:
+      - nrf52_display
+      - st7735s
+    snippets:
+      - studio-rpc-usb-uart
+      - zmk-usb-logging
+    cmake-args: -DCONFIG_ZMK_STUDIO=y -DCONFIG_ZMK_USB_LOGGING=y -DUSE_SOC_NRF52840=y
+    artifact-name: nrf52_st7735s
+
+  - board: rpi_pico
+    shield:
+      - rp2040_display
+    snippets:
+      - studio-rpc-usb-uart
+      - zmk-usb-logging
+    cmake-args: -DCONFIG_ZMK_STUDIO=y -DCONFIG_ZMK_USB_LOGGING=y
+    artifact-name: rp2040_display
+
+  - board: rpi_pico
+    shield:
+      - rp2040_display
+      - ssd1306
+    snippets:
+      - studio-rpc-usb-uart
+      - zmk-usb-logging
+    cmake-args: -DCONFIG_ZMK_STUDIO=y -DCONFIG_ZMK_USB_LOGGING=y
+    artifact-name: rp2040_ssd1306
+
+  - board: rpi_pico
+    shield:
+      - rp2040_display
+      - st7735s
+    snippets:
+      - studio-rpc-usb-uart
+      - zmk-usb-logging
+    cmake-args: -DCONFIG_ZMK_STUDIO=y -DCONFIG_ZMK_USB_LOGGING=y
+    artifact-name: rp2040_st7735s

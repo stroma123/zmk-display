@@ -1,0 +1,14 @@
+# Copyright (c) 2022-2024 The ZMK Contributors
+# SPDX-License-Identifier: MIT
+
+config  SHIELD_RP2040_DISPLAY
+   def_bool $(shields_list_contains,rp2040_display)
+
+config  SHIELD_NRF52_DISPLAY
+   def_bool $(shields_list_contains,nrf52_display)
+
+config  SHIELD_ST7735S
+   def_bool $(shields_list_contains,st7735s)
+
+config  SHIELD_SSD1306
+   def_bool $(shields_list_contains,ssd1306)
