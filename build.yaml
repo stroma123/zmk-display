@@ -37,7 +37,7 @@ include:
     cmake-args: -DCONFIG_ZMK_STUDIO=y -DCONFIG_ZMK_USB_LOGGING=y -DUSE_SOC_NRF52840=y
     artifact-name: nrf52_ssd1306
 
-- board: nice_nano_v2
+  - board: nice_nano_v2
     shield:
       - nrf52_display
       - st7735s
