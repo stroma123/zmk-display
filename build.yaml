@@ -19,8 +19,7 @@
 ---
 include:
   - board: nice_nano_v2
-    shield:
-      - nrf52_display
+    shield: nrf52_display
     snippets:
       - studio-rpc-usb-uart
       - zmk-usb-logging
@@ -28,9 +27,7 @@ include:
     artifact-name: nrf52_display
 
   - board: nice_nano_v2
-    shield:
-      - nrf52_display
-      - ssd1306
+    shield: nrf52_display ssd1306
     snippets:
       - studio-rpc-usb-uart
       - zmk-usb-logging
@@ -38,9 +35,7 @@ include:
     artifact-name: nrf52_ssd1306
 
   - board: nice_nano_v2
-    shield:
-      - nrf52_display
-      - st7735s
+    shield: nrf52_display st7735s
     snippets:
       - studio-rpc-usb-uart
       - zmk-usb-logging
@@ -48,8 +43,7 @@ include:
     artifact-name: nrf52_st7735s
 
   - board: rpi_pico
-    shield:
-      - rp2040_display
+    shield: rp2040_display
     snippets:
       - studio-rpc-usb-uart
       - zmk-usb-logging
@@ -57,9 +51,7 @@ include:
     artifact-name: rp2040_display
 
   - board: rpi_pico
-    shield:
-      - rp2040_display
-      - ssd1306
+    shield: rp2040_display ssd1306
     snippets:
       - studio-rpc-usb-uart
       - zmk-usb-logging
@@ -67,9 +59,7 @@ include:
     artifact-name: rp2040_ssd1306
 
   - board: rpi_pico
-    shield:
-      - rp2040_display
-      - st7735s
+    shield: rp2040_display st7735s
     snippets:
       - studio-rpc-usb-uart
       - zmk-usb-logging
