@@ -75,10 +75,10 @@ config LV_DPI_DEF
     default 161
 
 config LV_Z_BITS_PER_PIXEL
-    default 1
+    default 16
 
 choice LV_COLOR_DEPTH
-    default LV_COLOR_DEPTH_1
+    default LV_COLOR_DEPTH_16
 endchoice
 
 config LV_Z_MEM_POOL_SIZE
