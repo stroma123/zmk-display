@@ -23,7 +23,7 @@ include:
     snippets:
       - studio-rpc-usb-uart
       - zmk-usb-logging
-    cmake-args: -DCONFIG_ZMK_STUDIO=y -DCONFIG_ZMK_USB_LOGGING=y -DUSE_SOC_NRF52840=y
+    cmake-args: -DCONFIG_ZMK_STUDIO=y -DCONFIG_ZMK_USB_LOGGING=y -DDTS_EXTRA_CPPFLAGS=-DUSE_SOC_NRF52840
     artifact-name: nrf52_display
 
   - board: nice_nano_v2
@@ -31,7 +31,7 @@ include:
     snippets:
       - studio-rpc-usb-uart
       - zmk-usb-logging
-    cmake-args: -DCONFIG_ZMK_STUDIO=y -DCONFIG_ZMK_USB_LOGGING=y -DUSE_SOC_NRF52840=y
+    cmake-args: -DCONFIG_ZMK_STUDIO=y -DCONFIG_ZMK_USB_LOGGING=y -DDTS_EXTRA_CPPFLAGS=-DUSE_SOC_NRF52840
     artifact-name: nrf52_ssd1306
 
   - board: nice_nano_v2
@@ -39,7 +39,7 @@ include:
     snippets:
       - studio-rpc-usb-uart
       - zmk-usb-logging
-    cmake-args: -DCONFIG_ZMK_STUDIO=y -DCONFIG_ZMK_USB_LOGGING=y -DUSE_SOC_NRF52840=y
+    cmake-args: -DCONFIG_ZMK_STUDIO=y -DCONFIG_ZMK_USB_LOGGING=y -DDTS_EXTRA_CPPFLAGS=-DUSE_SOC_NRF52840
     artifact-name: nrf52_st7735s
 
   - board: rpi_pico

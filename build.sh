@@ -8,7 +8,9 @@ if [ "${SHIELD1:0:6}" = "rp2040" ]; then
     BOARD=rpi_pico
 elif [ "${SHIELD1:0:5}" = "nrf52" ]; then
     BOARD=nice_nano_v2
-    EXTRA_MACRO="-DUSE_SOC_NRF52840=y"
+    # inject the macro into devicetree preprocessing so the shared display
+    # overlays take their nRF52840 branches
+    EXTRA_MACRO="-DDTS_EXTRA_CPPFLAGS=-DUSE_SOC_NRF52840"
 fi
 
 if [ -z "$BOARD" ]; then
