@@ -41,8 +41,10 @@
 		spi-max-frequency = <10000000>;
 		reg = <0>;
 #ifdef USE_SOC_NRF52840
-        cmd-data-gpios = <&gpio0 11 GPIO_ACTIVE_LOW>;	
-        reset-gpios = <&gpio0 9  GPIO_ACTIVE_LOW>;
+        // P0.11 is not on the SuperMini header and P0.09 is kscan col 0,
+        // so DC/RES live on free header pins D5/D8
+        cmd-data-gpios = <&gpio0 24 GPIO_ACTIVE_LOW>;  // D5
+        reset-gpios = <&gpio1 4 GPIO_ACTIVE_LOW>;      // D8
 #else
 		cmd-data-gpios = <&gpio0 7 GPIO_ACTIVE_LOW>;	
 		reset-gpios = <&gpio0 8  GPIO_ACTIVE_LOW>;
