@@ -31,9 +31,11 @@ The module defines four shields in `boards/shields/display/`:
 Wiring diagrams for every module/board combination are in the comment blocks of
 `boards/shields/display/ssd1306.overlay` and `st7735s.overlay`.
 
-The ST7735S panel orientation (landscape 160x80 / portrait 80x160) is selected by
-the `ST7735S_PORTRAIT` define at the top of `st7735s.overlay`; the status screen
-layout adapts at runtime.
+The ST7735S panel orientation defaults to portrait 80x160; for landscape 160x80
+build with `-DDTS_EXTRA_CPPFLAGS=-DST7735S_LANDSCAPE` (combine with the nRF52840
+macro as a semicolon-separated list: `"-DUSE_SOC_NRF52840;-DST7735S_LANDSCAPE"`)
+or pass `landscape` as the third argument of `build.sh`. The status screen layout
+adapts at runtime.
 
 nRF52840 builds require `-DDTS_EXTRA_CPPFLAGS=-DUSE_SOC_NRF52840` so the shared
 display overlays take their nRF52840 pin branches (a missing flag fails the build

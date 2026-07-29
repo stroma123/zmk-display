@@ -3,9 +3,13 @@
  * SPDX-License-Identifier: MIT
  */
 
-// Panel orientation for this build: define for portrait 80x160,
-// comment out for landscape 160x80.
+// Panel orientation: portrait 80x160 by default. For landscape 160x80
+// build with -DDTS_EXTRA_CPPFLAGS=-DST7735S_LANDSCAPE (combine with the
+// nRF52840 macro as a semicolon-separated list), or use
+// ./build.sh <base> st7735s landscape
+#ifndef ST7735S_LANDSCAPE
 #define ST7735S_PORTRAIT
+#endif
 
  / {
 	model = "rp2040, display, st7735s";
@@ -48,8 +52,8 @@
 		cmd-data-gpios = <&gpio0 7 GPIO_ACTIVE_LOW>;	
 		reset-gpios = <&gpio0 8  GPIO_ACTIVE_LOW>;
 #endif
-		// Orientation-specific settings; ST7735S_PORTRAIT is defined (or not)
-		// at the top of this file. The BGR bit (0x08) in madctl is required
+		// Orientation-specific settings; see the ST7735S_LANDSCAPE switch at
+		// the top of this file. The BGR bit (0x08) in madctl is required
 		// by this panel's color filter (verified on hardware).
 #ifdef ST7735S_PORTRAIT
 		width = <80>;
