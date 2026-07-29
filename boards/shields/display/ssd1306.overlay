@@ -40,11 +40,11 @@
         page-offset = <0>;
         display-offset = <0>;
         multiplex-ratio = <63>;
-        //segment-remap;  // Last column address is mapped to first segment - mirror x
-        //com-invdir;     // Scan direction is from last COM output to first COM output - mirror y
-        //com-sequential; // Sequential COM pin configuration - rotate 180 degree
+        segment-remap;    // mirror x; together with com-invdir rotates 180 degrees
+        com-invdir;       // mirror y
+        //com-sequential; // Sequential COM pin configuration (changes row interleaving, not rotation)
         prechargep = <0x22>;
-        inversion-on;     // Turn on display color inverting
+        //inversion-on;   // inverted polarity: lit background, dark pixels
     };
 };
 

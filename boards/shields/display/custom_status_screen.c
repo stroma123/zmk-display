@@ -22,8 +22,10 @@ LV_IMG_DECLARE(test_image);
 lv_obj_t *zmk_display_status_screen() {
     lv_obj_t *screen = lv_obj_create(NULL);
 
-    // reflow the test layout for narrow (portrait) panels
+    // reflow the test layout for narrow (portrait LCD) and compact
+    // (128x64 OLED) panels
     const bool narrow = lv_disp_get_hor_res(NULL) < 120;
+    const bool compact = !narrow && lv_disp_get_ver_res(NULL) < 70;
 
     lv_obj_set_style_bg_color(screen, lv_color_black(), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(screen, LV_OPA_COVER, LV_PART_MAIN);
@@ -32,10 +34,14 @@ lv_obj_t *zmk_display_status_screen() {
     const uint32_t bar_hex[3] = {0xFF0000, 0x00FF00, 0x0000FF};
     for (int i = 0; i < 3; i++) {
         lv_obj_t *bar = lv_obj_create(screen);
-        lv_obj_set_size(bar, 40, 14);
         if (narrow) {
+            lv_obj_set_size(bar, 40, 14);
             lv_obj_align(bar, LV_ALIGN_TOP_LEFT, 8, 8 + i * 18);
+        } else if (compact) {
+            lv_obj_set_size(bar, 36, 10);
+            lv_obj_align(bar, LV_ALIGN_TOP_LEFT, 4 + i * 44, 2);
         } else {
+            lv_obj_set_size(bar, 40, 14);
             lv_obj_align(bar, LV_ALIGN_TOP_LEFT, 8 + i * 48, 8);
         }
         lv_obj_set_style_bg_color(bar, lv_color_hex(bar_hex[i]), LV_PART_MAIN);
@@ -50,6 +56,8 @@ lv_obj_t *zmk_display_status_screen() {
     lv_img_set_src(img, &test_image);
     if (narrow) {
         lv_obj_align(img, LV_ALIGN_TOP_MID, 0, 114);
+    } else if (compact) {
+        lv_obj_align(img, LV_ALIGN_BOTTOM_LEFT, 4, -2);
     } else {
         lv_obj_align(img, LV_ALIGN_BOTTOM_LEFT, 8, -8);
     }
@@ -57,16 +65,19 @@ lv_obj_t *zmk_display_status_screen() {
     zmk_widget_canvas_demo_init(&canvas_demo_widget, screen);
     if (narrow) {
         lv_obj_align(zmk_widget_canvas_demo_obj(&canvas_demo_widget), LV_ALIGN_TOP_MID, 0, 62);
+    } else if (compact) {
+        lv_obj_align(zmk_widget_canvas_demo_obj(&canvas_demo_widget), LV_ALIGN_TOP_RIGHT, -2, 14);
     } else {
         lv_obj_align(zmk_widget_canvas_demo_obj(&canvas_demo_widget), LV_ALIGN_TOP_RIGHT, -4, 4);
     }
 
     zmk_widget_layer_label_init(&layer_label_widget, screen);
     lv_obj_t *layer_obj = zmk_widget_layer_label_obj(&layer_label_widget);
-    lv_obj_set_style_text_font(layer_obj, narrow ? &lv_font_montserrat_12 : &lv_font_montserrat_26,
-                               LV_PART_MAIN);
+    lv_obj_set_style_text_font(
+        layer_obj, (narrow || compact) ? &lv_font_montserrat_12 : &lv_font_montserrat_26,
+        LV_PART_MAIN);
     lv_obj_set_style_text_color(layer_obj, lv_color_white(), LV_PART_MAIN);
-    lv_obj_align(layer_obj, LV_ALIGN_BOTTOM_MID, 0, narrow ? 0 : -6);
+    lv_obj_align(layer_obj, LV_ALIGN_BOTTOM_MID, 0, (narrow || compact) ? 0 : -6);
 
     return screen;
 }
