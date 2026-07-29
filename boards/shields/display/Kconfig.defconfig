@@ -29,6 +29,10 @@ config ZMK_DISPLAY_STATUS_SCREEN_CUSTOM
     select LV_USE_LABEL
     select LV_USE_CANVAS
     select LV_FONT_MONTSERRAT_12
+    select ZMK_WPM
+
+config DISPLAY_WIDGET_INVERTED
+    bool "Invert custom status widget colors (dark on light)"
 
 if ZMK_DISPLAY
 
