@@ -47,12 +47,13 @@
         };
     };
     spi0_default: spi0_default {
+        // the board's rpi_pico-pinctrl.dtsi defines spi0_default on pins
+        // 16..19; nodes merge, so the RX group must be deleted explicitly
+        /delete-node/ group2;
         group1 {
-            pinmux = <SPI0_CSN_P17>, <SPI0_SCK_P18>, <SPI0_TX_P19>;
-        };
-        group2 {
-            pinmux = <SPI0_RX_P16>;
-            input-enable;
+            // write-only display: software CS on GP6 (no CSN mux), no RX;
+            // GP16/GP17 stay free for the kscan rows
+            pinmux = <SPI0_SCK_P18>, <SPI0_TX_P19>;
         };
     };
 };

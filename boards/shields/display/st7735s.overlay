@@ -30,8 +30,7 @@
 &spi0 {
   pinctrl-0 = < &spi0_default >;
   pinctrl-names = "default";
-  cs-gpios = <&gpio0 6 GPIO_ACTIVE_LOW> ,
-             <&gpio0 21 GPIO_ACTIVE_LOW>;
+  cs-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
 #endif
 	status = "okay";
 
@@ -109,7 +108,7 @@ According to zmk/zephyr/boards/arm/rpi_pico/rpi_pico-pinctrl.dtsi default SPI0 p
  SDA            -> P0.19, SPI data (MOSI)
  RES            -> P0.08, Active low
  DC             -> P0.07, DC=1 - data, DC=0 - command
- CS             -> P0.17, Active low
+ CS             -> P0.06, Active low (software CS; GP17 belongs to kscan row 3)
  BLK            -> D2, Blacklight Control. High: Blacklight on Low: Blacklight off.
 
  ssd1306 module -> ProMicro RP2040
