@@ -83,13 +83,13 @@
 / {
     chosen {
         zephyr,console = &cdc_acm_uart;
-        zmk,studio-rpc-uart = &sudio_rpc_uart;
+        zmk,studio-rpc-uart = &studio_rpc_uart;
     };
 };
 
 zephyr_udc0: &usbd {
     status = "okay";
-    sudio_rpc_uart: sudio_rpc_uart {
+    studio_rpc_uart: studio_rpc_uart {
         compatible = "zephyr,cdc-acm-uart";
     };
     cdc_acm_uart: cdc_acm_uart {

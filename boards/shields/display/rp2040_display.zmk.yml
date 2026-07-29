@@ -1,0 +1,10 @@
+file_format: "1"
+id: rp2040_display
+name: rp2040_display
+type: shield
+requires: [rpi_pico]
+features:
+  - keys
+  - studio
+outputs:
+  - usb

@@ -1,0 +1,6 @@
+file_format: "1"
+id: st7735s
+name: ST7735S 160x80 IPS LCD
+type: shield
+features:
+  - display
