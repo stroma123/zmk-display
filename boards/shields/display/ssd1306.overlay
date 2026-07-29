@@ -77,10 +77,25 @@ According to zmk/zephyr/boards/arm/rpi_pico/rpi_pico-pinctrl.dtsi default SPI0 p
  CS             -> P0.17, Active low
  BLK            -> D2, Blacklight Control. High: Blacklight on Low: Blacklight off.
 
-ssd1306 module -> ProMicro nRF52840
-GND            -> GND
-VCC            -> 3V3 (power cut off if P0.13 is low)
-SDA            -> P0.17
-SCK            -> P0.20
+ ssd1306 module -> ProMicro RP2040
+ GND            -> GND
+ VCC            -> 3V3
+ SCK            -> P0.05, I2C0 SCL
+ SDA            -> P0.04, I2C0 SDA
 
+ st7735s module -> ProMicro nRF52840 (SuperMini)
+ GND            -> GND
+ VCC            -> 3V3
+ SCK            -> P0.06 (D0), SPI clock
+ SDA            -> P0.08 (D1), SPI data (MOSI)
+ RES            -> P1.04 (D8), Active low
+ DC             -> P0.24 (D5), DC=1 - data, DC=0 - command
+ CS             -> P1.06 (D9), Active low
+ BLK            -> 3V3, Backlight on
+
+ ssd1306 module -> ProMicro nRF52840
+ GND            -> GND
+ VCC            -> 3V3 (power cut off if P0.13 is low)
+ SDA            -> P0.17
+ SCK            -> P0.20
 */
