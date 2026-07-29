@@ -27,6 +27,13 @@ config ZMK_DISPLAY
 	select LV_USE_CONT
 	select LV_FONT_MONTSERRAT_26
 
+# LVGL is built with LV_CONF_MINIMAL, so widgets used by the custom
+# status screen must be enabled explicitly (built-in screen does this
+# via ZMK's own Kconfig defaults).
+config ZMK_DISPLAY_STATUS_SCREEN_CUSTOM
+    select LV_USE_LABEL
+    select LV_USE_CANVAS
+
 if ZMK_DISPLAY
 
 config I2C

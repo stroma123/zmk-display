@@ -2,6 +2,11 @@
  * Copyright (c) 2022-2024 alin m elena
  * SPDX-License-Identifier: MIT
  */
+
+// Panel orientation for this build: define for portrait 80x160,
+// comment out for landscape 160x80.
+#define ST7735S_PORTRAIT
+
  / {
 	model = "rp2040, display, st7735s";
 	chosen {
@@ -42,36 +47,27 @@
 		cmd-data-gpios = <&gpio0 7 GPIO_ACTIVE_LOW>;	
 		reset-gpios = <&gpio0 8  GPIO_ACTIVE_LOW>;
 #endif
-/*
+		// Orientation-specific settings; ST7735S_PORTRAIT is defined (or not)
+		// at the top of this file. The BGR bit (0x08) in madctl is required
+		// by this panel's color filter (verified on hardware).
+#ifdef ST7735S_PORTRAIT
 		width = <80>;
 		height = <160>;
 		x-offset = <24>;
 		y-offset = <0>;
-		madctl = <0xC0>;
+		madctl = <0xC8>;  // MY|MX portrait + BGR
 		colmod = <0x05>;
-		caset = [00 00 00 4F];
-		raset = [00 00 00 9F];
-		vmctr1 = <0x0e>;
 		invctr = <0x07>;
-		pwctr1 = [a2 02 84];
-		pwctr2 = [c5];
-		pwctr3 = [0a 00];
-		pwctr4 = [8a 2a];
-		pwctr5 = [8a ee];
-		frmctr1 = [01 2c 2d];
-		frmctr2 = [01 2c 2d];
-		frmctr3 = [01 2c 2d 01 2c 2d];
-		gamctrp1 = [02 1c 07 12 37 32 29 2d 29 25 2b 39 00 01 03 10];
-		gamctrn1 = [03 1d 07 06 2e 2c 29 2d 2e 2e 37 3f 00 00 02 10];
-	*/
+#else
 		width = <160>;
 		height = <80>;
 		x-offset = <0>;
 		y-offset = <24>;
-		madctl = <0x60>;
+		madctl = <0x68>;  // MV|MX landscape + BGR
 		colmod = <0x55>;
+#endif
 		caset = [00 00 00 4F];
-		raset = [00 00 00 9F];		
+		raset = [00 00 00 9F];
 		vmctr1 = <0x0e>;
 		pwctr1 = [a2 02 84];
 		pwctr2 = [c5];

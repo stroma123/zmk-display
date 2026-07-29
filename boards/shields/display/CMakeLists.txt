@@ -1,3 +1,7 @@
-if(CONFIG_ZMK_DISPLAY)
+if(CONFIG_ZMK_DISPLAY AND CONFIG_ZMK_DISPLAY_STATUS_SCREEN_CUSTOM)
   zephyr_library_include_directories(${CMAKE_SOURCE_DIR}/include)
+  zephyr_library_sources(custom_status_screen.c)
+  zephyr_library_sources(widgets/layer_label.c)
+  zephyr_library_sources(widgets/canvas_demo.c)
+  zephyr_library_sources(widgets/test_image.c)
 endif()
