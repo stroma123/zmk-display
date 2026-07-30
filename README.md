@@ -17,7 +17,7 @@ primitives, image widget, live layer label):
 |                              | ssd1306 | st7735s |
 |------------------------------|---------|---------|
 | **rpi_pico** (YD-RP2040)     | OK      | OK (landscape + portrait) |
-| **nice_nano_v2** (SuperMini) | OK      | OK (portrait) |
+| **nice_nano_v2** (SuperMini) | OK      | OK (landscape + portrait) |
 
 ## Shields
 
