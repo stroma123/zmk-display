@@ -3,4 +3,8 @@ on: [push, pull_request, workflow_dispatch]
 
 jobs:
   build:
-    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@v0.3
+    # ZMK main pinned by SHA: the v0.3 tag's workflow uses Node-20-era
+    # actions (checkout@v4 etc.) that GitHub warns about. The firmware
+    # source stays at v0.3 - that is pinned by config/west.yml, not here.
+    # Re-pin to the next ZMK release tag when one exists.
+    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@faaf39d9f59cd2a27eca3739cdd9eb197654299b

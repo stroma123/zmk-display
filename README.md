@@ -44,9 +44,10 @@ carries it for GitHub Actions.
 
 ## Building via GitHub action
 
-The GitHub Actions configuration (`build.yaml`, `.github/workflows/build.yml`) is
-kept in sync with the local build flags, but these builds are not regularly
-exercised.
+The GitHub Actions configuration (`build.yaml`, `.github/workflows/build.yml`)
+builds all six firmware variants. The reusable ZMK workflow is pinned to a ZMK
+`main` commit for up-to-date GitHub Actions (Node 24); the firmware source
+itself stays at ZMK v0.3, pinned by `config/west.yml`.
 
 ## Building locally using Docker image
 
