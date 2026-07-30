@@ -19,6 +19,9 @@
 #if IS_ENABLED(CONFIG_ZMK_WPM)
 #include "widgets/wpm_status.h"
 #endif
+#if IS_ENABLED(CONFIG_DISPLAY_BONGO_CAT)
+#include "widgets/bongo_cat.h"
+#endif
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
@@ -30,6 +33,9 @@ static struct zmk_widget_battery_status battery_status_widget;
 #endif
 #if IS_ENABLED(CONFIG_ZMK_WPM)
 static struct zmk_widget_wpm_status wpm_status_widget;
+#endif
+#if IS_ENABLED(CONFIG_DISPLAY_BONGO_CAT)
+static struct zmk_widget_bongo_cat bongo_cat_widget;
 #endif
 
 lv_obj_t *zmk_display_status_screen() {
@@ -63,12 +69,35 @@ lv_obj_t *zmk_display_status_screen() {
     }
 
 #if IS_ENABLED(CONFIG_ZMK_WPM)
-    zmk_widget_wpm_status_init(&wpm_status_widget, screen);
-    lv_obj_t *wpm_obj = zmk_widget_wpm_status_obj(&wpm_status_widget);
+    // on wide layouts the bongo cat takes the sparkline's place; portrait
+    // has room for both
+    if (narrow || !IS_ENABLED(CONFIG_DISPLAY_BONGO_CAT)) {
+        zmk_widget_wpm_status_init(&wpm_status_widget, screen);
+        lv_obj_t *wpm_obj = zmk_widget_wpm_status_obj(&wpm_status_widget);
+        if (narrow) {
+            lv_obj_align(wpm_obj, LV_ALIGN_TOP_MID, 0, 46);
+        } else {
+            lv_obj_align(wpm_obj, LV_ALIGN_BOTTOM_RIGHT, compact ? -2 : -4, compact ? -2 : -4);
+        }
+    }
+#endif
+
+#if IS_ENABLED(CONFIG_DISPLAY_BONGO_CAT)
+    // frames are stored sideways (40x128); rotate 90 degrees counter-
+    // clockwise around the image center so the cat renders upright as
+    // 128x40 (hardware-verified; 900 puts it upside down)
+    zmk_widget_bongo_cat_init(&bongo_cat_widget, screen);
+    lv_obj_t *cat_obj = zmk_widget_bongo_cat_obj(&bongo_cat_widget);
+    lv_img_set_pivot(cat_obj, 20, 64);
+    lv_img_set_angle(cat_obj, 2700);
     if (narrow) {
-        lv_obj_align(wpm_obj, LV_ALIGN_TOP_MID, 0, 46);
+        // scale to 62.5% so the upright cat fits the 80px width
+        lv_img_set_zoom(cat_obj, 160);
+        lv_obj_align(cat_obj, LV_ALIGN_CENTER, 0, 28);
+    } else if (compact) {
+        lv_obj_align(cat_obj, LV_ALIGN_CENTER, 0, 10);
     } else {
-        lv_obj_align(wpm_obj, LV_ALIGN_BOTTOM_RIGHT, compact ? -2 : -4, compact ? -2 : -4);
+        lv_obj_align(cat_obj, LV_ALIGN_CENTER, 12, 8);
     }
 #endif
 

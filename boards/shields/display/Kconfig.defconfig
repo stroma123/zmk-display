@@ -34,6 +34,22 @@ config ZMK_DISPLAY_STATUS_SCREEN_CUSTOM
 config DISPLAY_WIDGET_INVERTED
     bool "Invert custom status widget colors (dark on light)"
 
+config DISPLAY_BONGO_CAT
+    bool "Bongo cat animation on the custom status screen"
+    depends on ZMK_DISPLAY_STATUS_SCREEN_CUSTOM
+
+if DISPLAY_BONGO_CAT
+
+config DISPLAY_BONGO_CAT_IDLE_LIMIT
+    int "WPM below this plays the idle animation"
+    default 30
+
+config DISPLAY_BONGO_CAT_SLOW_LIMIT
+    int "WPM below this shows the slow typing frame"
+    default 60
+
+endif # DISPLAY_BONGO_CAT
+
 if ZMK_DISPLAY
 
 config I2C
